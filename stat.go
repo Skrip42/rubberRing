@@ -13,7 +13,7 @@ type RubberRingStat struct {
 	EndPosition      int
 }
 
-func Stat[V any](ring *RubberRing[V]) RubberRingStat {
+func stat[V any](ring *RubberRing[V]) RubberRingStat {
 	stat := RubberRingStat{
 		Size:             ring.size,
 		Capacity:         ring.capacity,

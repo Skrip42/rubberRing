@@ -48,6 +48,10 @@ func (r *RubberRing[V]) Capacity() int {
 	return r.capacity
 }
 
+func (r *RubberRing[V]) Stat() RubberRingStat {
+	return stat(r)
+}
+
 func (r *RubberRing[V]) Pull() (V, error) {
 	var el V
 	if r.size == 0 {

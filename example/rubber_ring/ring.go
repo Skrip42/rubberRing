@@ -24,7 +24,7 @@ func main() {
 	// PassiveChanks:0		  PassiveCapacity:0
 	// ActiveChanksSize:[2 2] EndChankNo:0
 	// StartPosition:0		  EndPosition:0
-	fmt.Printf("%+v\n", rubberring.Stat(rr))
+	fmt.Printf("%+v\n", rr.Stat())
 
 	// This will put 7 messages in the buffer.
 	// Since this is more than the initial capacity, 2 more chunks of 2 will be created
@@ -39,7 +39,7 @@ func main() {
 	// PassiveChanks:0			  PassiveCapacity:0
 	// ActiveChanksSize:[2 2 2 2] EndChankNo:3
 	// StartPosition:0			  EndPosition:7
-	fmt.Printf("%+v\n", rubberring.Stat(rr))
+	fmt.Printf("%+v\n", rr.Stat())
 
 	//When the capacity is filled, memory is immediately allocated for the next element.
 	rr.Push(8)
@@ -49,7 +49,7 @@ func main() {
 	// PassiveChanks:0				  PassiveCapacity:0
 	// ActiveChanksSize:[2 2 2 2 2 2] EndChankNo:4
 	// StartPosition:0				  EndPosition:0
-	fmt.Printf("%+v\n", rubberring.Stat(rr))
+	fmt.Printf("%+v\n", rr.Stat())
 
 	// Now we subtract 6 elements from the buffer.
 	// This will clear the first 3 chunks, and they will try to go to passive chunks,
@@ -71,7 +71,7 @@ func main() {
 	// PassiveChanks:2			PassiveCapacity:4
 	// ActiveChanksSize:[2 2 2] EndChankNo:1
 	// StartPosition:0			EndPosition:2
-	fmt.Printf("%+v\n", rubberring.Stat(rr))
+	fmt.Printf("%+v\n", rr.Stat())
 
 	// If we put more elements into the buffer,
 	// the passive capacity will become active. No new allocation will occur.
@@ -84,7 +84,7 @@ func main() {
 	// PassiveChanks:0				PassiveCapacity:0
 	// ActiveChanksSize:[2 2 2 2 2] EndChankNo:4
 	// StartPosition:0				EndPosition:9
-	fmt.Printf("%+v\n", rubberring.Stat(rr))
+	fmt.Printf("%+v\n", rr.Stat())
 
 	for i := 0; i < 9; i++ {
 		v, err := rr.Pull()
@@ -108,5 +108,5 @@ func main() {
 	// PassiveChanks:2				PassiveCapacity:4
 	// ActiveChanksSize:[2 2 2 2 2] EndChankNo:0
 	// StartPosition:1				EndPosition:1
-	fmt.Printf("%+v\n", rubberring.Stat(rr))
+	fmt.Printf("%+v\n", rr.Stat())
 }

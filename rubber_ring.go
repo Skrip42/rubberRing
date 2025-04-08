@@ -6,7 +6,6 @@ import (
 )
 
 type GrowStrategy func(capacity int) (newChankSize, newChankCount int)
-type SplitStrategy func(capacity, additional_capacity int) int
 
 type chank[V any] struct {
 	data      []V
@@ -32,7 +31,7 @@ func NewRubberRing[V any](options ...applyConfigFunc) *RubberRing[V] {
 
 	rr := &RubberRing[V]{
 		config:     config,
-		freeChanks: make(chan *chank[V], config.freeChankBufferSize),
+		freeChanks: make(chan *chank[V], config.pasiveChankBufferSize),
 	}
 	capacity := config.startChankSize * config.startChankCount
 	chanks := createNewChankChain[V](
@@ -124,6 +123,12 @@ func createNewChankChain[V any](
 	chankSize int,
 	chankCount int,
 ) *chank[V] {
+	if chankCount < 1 {
+		chankCount = 1
+	}
+	if chankSize < 1 {
+		chankSize = 256
+	}
 	var chk *chank[V]
 	for i := 0; i < chankCount; i++ {
 		newChank := &chank[V]{

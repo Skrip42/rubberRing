@@ -17,7 +17,7 @@ func main() {
 		rubberring.WithStartChankCount(2),
 		rubberring.WithStartChankSize(2),
 		rubberring.WithGrowStrategy(func(_ int) (int, int) { return 2, 2 }),
-		rubberring.WithFreeChankBufferSize(2),
+		rubberring.WithPassiveChankBufferSize(2),
 	)
 	resultFromRootine1 := []int{}
 	resultFromRootine2 := []int{}

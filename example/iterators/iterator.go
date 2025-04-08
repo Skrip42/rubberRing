@@ -14,7 +14,7 @@ func main() {
 		rubberring.WithStartChankCount(2),
 		rubberring.WithStartChankSize(2),
 		rubberring.WithGrowStrategy(func(_ int) (int, int) { return 2, 2 }),
-		rubberring.WithFreeChankBufferSize(2),
+		rubberring.WithPassiveChankBufferSize(2),
 	)
 
 	// push some data
@@ -32,7 +32,7 @@ func main() {
 		rubberring.WithStartChankCount(2),
 		rubberring.WithStartChankSize(2),
 		rubberring.WithGrowStrategy(func(_ int) (int, int) { return 2, 2 }),
-		rubberring.WithFreeChankBufferSize(2),
+		rubberring.WithPassiveChankBufferSize(2),
 	)
 
 	ctx, cancel := context.WithCancel(context.Background())

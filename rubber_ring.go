@@ -2,9 +2,11 @@ package rubberring
 
 import (
 	"io"
+	"iter"
 )
 
-type GrowStrategy func(size int) int
+type GrowStrategy func(capacity int) (newChankSize, newChankCount int)
+type SplitStrategy func(capacity, additional_capacity int) int
 
 type chank[V any] struct {
 	data      []V
@@ -32,7 +34,11 @@ func NewRubberRing[V any](options ...applyConfigFunc) *RubberRing[V] {
 		config:     config,
 		freeChanks: make(chan *chank[V], config.freeChankBufferSize),
 	}
-	chanks, capacity := createNewChankChain[V](config.startCapacity, config.splitFactor)
+	capacity := config.startChankSize * config.startChankCount
+	chanks := createNewChankChain[V](
+		config.startChankSize,
+		config.startChankCount,
+	)
 	rr.startChank = chanks
 	rr.endChank = chanks
 	rr.capacity = capacity
@@ -86,12 +92,12 @@ func (r *RubberRing[V]) Push(el V) {
 			select {
 			case newEndChank = <-r.freeChanks:
 			default:
-				newChanks, newChanksCapacity := createNewChankChain[V](
-					r.config.growStrategy(r.capacity),
-					r.config.splitFactor,
+				newChankSize, newChankCount := r.config.growStrategy(r.capacity)
+				newChanks := createNewChankChain[V](
+					newChankSize, newChankCount,
 				)
 				newEndChank = newChanks
-				r.capacity += newChanksCapacity
+				r.capacity += newChankSize * newChankCount
 			}
 		}
 		r.endChank.nextChank = newEndChank
@@ -100,18 +106,31 @@ func (r *RubberRing[V]) Push(el V) {
 	}
 }
 
+func (r *RubberRing[V]) Elements() iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for {
+			v, err := r.Pull()
+			if err != nil {
+				return
+			}
+			if !yield(v) {
+				return
+			}
+		}
+	}
+}
+
 func createNewChankChain[V any](
-	size int,
-	splitFactor int,
-) (*chank[V], int) {
+	chankSize int,
+	chankCount int,
+) *chank[V] {
 	var chk *chank[V]
-	chankSize := size / splitFactor
-	for i := 0; i < splitFactor; i++ {
+	for i := 0; i < chankCount; i++ {
 		newChank := &chank[V]{
 			data:      make([]V, chankSize),
 			nextChank: chk,
 		}
 		chk = newChank
 	}
-	return chk, chankSize * splitFactor
+	return chk
 }

@@ -1,24 +1,30 @@
 package rubberring
 
 type config struct {
-	startCapacity       int
+	startChankSize      int
 	freeChankBufferSize int
+	startChankCount     int
 	growStrategy        GrowStrategy
-	splitFactor         int
 }
 
 var defaultConfig = config{
-	startCapacity:       24,
-	freeChankBufferSize: 2,
-	growStrategy:        func(size int) int { return 24 },
-	splitFactor:         3,
+	startChankSize:      256,
+	startChankCount:     4,
+	freeChankBufferSize: 3,
+	growStrategy:        func(capacity int) (int, int) { return 256, 4 },
 }
 
 type applyConfigFunc func(o *config)
 
-func WithStartCapacity(capacity int) applyConfigFunc {
+func WithStartChankCount(count int) applyConfigFunc {
 	return func(c *config) {
-		c.startCapacity = capacity
+		c.startChankCount = count
+	}
+}
+
+func WithStartChankSize(size int) applyConfigFunc {
+	return func(c *config) {
+		c.startChankSize = size
 	}
 }
 
@@ -31,11 +37,5 @@ func WithFreeChankBufferSize(bufferSize int) applyConfigFunc {
 func WithGrowStrategy(strategy GrowStrategy) applyConfigFunc {
 	return func(c *config) {
 		c.growStrategy = strategy
-	}
-}
-
-func WithSplitFactor(factor int) applyConfigFunc {
-	return func(c *config) {
-		c.splitFactor = factor
 	}
 }

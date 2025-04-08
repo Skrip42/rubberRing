@@ -2,6 +2,7 @@ package rubberring
 
 import (
 	"context"
+	"iter"
 	"sync"
 
 	syncutils "github.com/Skrip42/syncUtils"
@@ -63,5 +64,19 @@ func (r *SyncRubberRing[V]) Pull(ctx context.Context) (V, error) {
 			return v, ctx.Err()
 		}
 		r.mu.Lock()
+	}
+}
+
+func (r *SyncRubberRing[V]) Elements(ctx context.Context) iter.Seq[V] {
+	return func(yield func(V) bool) {
+		for {
+			v, err := r.Pull(ctx)
+			if err != nil {
+				return
+			}
+			if !yield(v) {
+				return
+			}
+		}
 	}
 }

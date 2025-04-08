@@ -14,9 +14,9 @@ func main() {
 	// Also allows you to wait for an element to appear if the buffer is empty.
 	// To terminate the wait urgently, you need to close the context.
 	rr := rubberring.NewSyncRubberRing[int](
-		rubberring.WithStartCapacity(4),
-		rubberring.WithSplitFactor(2),
-		rubberring.WithGrowStrategy(func(_ int) int { return 4 }),
+		rubberring.WithStartChankCount(2),
+		rubberring.WithStartChankSize(2),
+		rubberring.WithGrowStrategy(func(_ int) (int, int) { return 2, 2 }),
 		rubberring.WithFreeChankBufferSize(2),
 	)
 	resultFromRootine1 := []int{}

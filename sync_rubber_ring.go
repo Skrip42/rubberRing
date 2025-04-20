@@ -25,13 +25,13 @@ func NewSyncRubberRing[V any](options ...applyConfigFunc) *SyncRubberRing[V] {
 func (r *SyncRubberRing[V]) Size() int {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return r.Size()
+	return r.ring.Size()
 }
 
 func (r *SyncRubberRing[V]) Capacity() int {
 	r.mu.Lock()
 	defer r.mu.Unlock()
-	return r.Capacity()
+	return r.ring.Capacity()
 }
 
 func (r *SyncRubberRing[V]) Stat() RubberRingStat {
